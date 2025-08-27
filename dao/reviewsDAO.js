@@ -1,4 +1,4 @@
-import mongodb from "mongodb";
+    import mongodb from "mongodb";
 const ObjectId = mongodb.ObjectId;
 
 let reviews
@@ -69,7 +69,7 @@ export default class ReviewsDAO {
     static async getReviewsByMovieId(movieId) {
         console.log("mov", movieId);
         try {
-            const cursor = await reviews.find({ movieId: parseInt(movieId) });
+            const cursor = await reviews.find({ movieId: movieId });
             return cursor.toArray();
         } catch (e) {
             console.log(`Unable to get review: ${e}`);
