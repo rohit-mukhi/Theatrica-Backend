@@ -18,7 +18,7 @@ export default class ReviewsController {
         }
     }
 
-    static async apiGetReview(req, res, next) {
+   /*  static async apiGetReview(req, res, next) {
         try {
             let id = req.params.id || {}
             let review = await ReviewsDAO.getReview(id);
@@ -31,7 +31,7 @@ export default class ReviewsController {
             console.log(`api, ${e}`);
             res.status(500).json({error: e});
         }
-    }
+    } */
 
     static async apiUpdateReview(req, res, next) {
         try {
