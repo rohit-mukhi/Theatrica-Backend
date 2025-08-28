@@ -4,7 +4,11 @@ import reviews from "./api/reviews.route.js"
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: 'https://theatrica.netlify.app', // or '*' for development/testing only
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type'],
+}));
 app.use(express.json());
 
 app.use("/api/v1/reviews", reviews);
