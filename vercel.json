@@ -9,20 +9,11 @@
   "routes": [
     {
       "src": "/api/v1/reviews/(.*)",
-      "headers": [
-        {
-          "key": "Access-Control-Allow-Origin",
-          "value": "https://theatrica.netlify.app"
-        },
-        {
-          "key": "Access-Control-Allow-Methods",
-          "value": "GET, POST, PUT, DELETE, OPTIONS"
-        },
-        {
-          "key": "Access-Control-Allow-Headers",
-          "value": "Content-Type, X-Requested-With, Accept"
-        }
-      ]
+      "headers": {
+        "Access-Control-Allow-Origin": "https://theatrica.netlify.app",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type, X-Requested-With, Accept"
+      }
     },
     {
       "src": "/(.*)",
