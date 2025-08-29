@@ -12,6 +12,3 @@ app.use("/api/v1/reviews", reviews);
 app.use("/", (req, res) => res.status(404).json({error: "Not Found!"}));
 
 export default app;
-
-
-// https://url.com/api/v1/reviews/movie/tt2637y89
