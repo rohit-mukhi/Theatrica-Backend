@@ -7,7 +7,7 @@ export default class UserController {
             const username = req.body.username;
             const password = req.body.password;
 
-            const hashedPassword = await bcrypt.hash(password, 10);
+            const hashedPassword = await bcrypt.hash(password, 2);
 
             const addResponse = await UserDAO.addUser(username, hashedPassword)
             res.json({ status: "Success" });
