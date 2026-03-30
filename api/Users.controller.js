@@ -182,6 +182,8 @@ export default class UserController {
             res.status(401).json({ success: false, message: 'Invalid authorization code' });
         }
     }
+
+    static async apiSetUsername(req, res, next) {
         try {
             const { username } = req.body;
             const googleId = req.user.googleId;
@@ -196,7 +198,6 @@ export default class UserController {
                 return res.status(409).json({ success: false, message: result.error });
             }
 
-            // Issue a new token with the updated username
             const token = jwt.sign(
                 { googleId, email: req.user.email, username: username.trim() },
                 process.env.JWT_SECRET,
