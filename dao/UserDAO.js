@@ -93,7 +93,7 @@ export default class UserDAO {
                 user = await users.findOne({ googleId: googleId });
                 return { ...user, isNewUser: true };
             }
-            return { ...user, isNewUser: false };
+            return { ...user, isNewUser: !user.username };
         } catch (e) {
             console.error(`Unable to find or create Google user: ${e}`);
             throw e;
