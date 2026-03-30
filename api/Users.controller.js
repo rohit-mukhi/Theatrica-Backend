@@ -1,6 +1,7 @@
 import UserDAO from "../dao/UserDAO.js";
 import bcrypt from 'bcrypt'
 import { OAuth2Client } from 'google-auth-library'
+import jwt from 'jsonwebtoken'
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
 
@@ -107,24 +108,62 @@ export default class UserController {
                 audience: process.env.GOOGLE_CLIENT_ID,
             });
             const payload = ticket.getPayload();
-            const user = await UserDAO.findOrCreateGoogleUser(
+            const result = await UserDAO.findOrCreateGoogleUser(
                 payload.sub,
                 payload.email,
                 payload.name,
                 payload.picture
             );
+
+            const token = jwt.sign(
+                { googleId: result.googleId, email: result.email, username: result.username },
+                process.env.JWT_SECRET,
+                { expiresIn: '7d' }
+            );
+
             res.json({
                 success: true,
+                token,
+                isNewUser: result.isNewUser,
                 user: {
-                    googleId: user.googleId,
-                    username: user.username,
-                    email: user.email,
-                    profilePic: user.profilePic,
+                    googleId: result.googleId,
+                    username: result.username,
+                    email: result.email,
+                    profilePic: result.profilePic,
                 }
             });
         } catch (e) {
             console.error(`Google auth error: ${e.message}`);
             res.status(401).json({ success: false, message: 'Invalid Google token' });
+        }
+    }
+
+    static async apiSetUsername(req, res, next) {
+        try {
+            const { username } = req.body;
+            const googleId = req.user.googleId;
+
+            if (!username || username.trim().length < 3) {
+                return res.status(400).json({ success: false, message: 'Username must be at least 3 characters' });
+            }
+
+            const result = await UserDAO.setUsername(googleId, username.trim());
+
+            if (result.error) {
+                return res.status(409).json({ success: false, message: result.error });
+            }
+
+            // Issue a new token with the updated username
+            const token = jwt.sign(
+                { googleId, email: req.user.email, username: username.trim() },
+                process.env.JWT_SECRET,
+                { expiresIn: '7d' }
+            );
+
+            res.json({ success: true, token, username: username.trim() });
+        } catch (e) {
+            console.error(`Set username error: ${e.message}`);
+            res.status(500).json({ success: false, message: 'Internal server error' });
         }
     }
 }

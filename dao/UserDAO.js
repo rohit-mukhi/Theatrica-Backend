@@ -83,17 +83,34 @@ export default class UserDAO {
             if (!user) {
                 const userDoc = {
                     googleId: googleId,
-                    username: name,
+                    username: null,
                     email: email,
                     profilePic: picture || 0,
                     password: null,
+                    isNewUser: true,
                 };
                 await users.insertOne(userDoc);
                 user = await users.findOne({ googleId: googleId });
+                return { ...user, isNewUser: true };
             }
-            return user;
+            return { ...user, isNewUser: false };
         } catch (e) {
             console.error(`Unable to find or create Google user: ${e}`);
+            throw e;
+        }
+    }
+
+    static async setUsername(googleId, username) {
+        try {
+            const existing = await users.findOne({ username: username });
+            if (existing) return { error: 'Username already taken' };
+            const result = await users.updateOne(
+                { googleId: googleId },
+                { $set: { username: username, isNewUser: false } }
+            );
+            return result;
+        } catch (e) {
+            console.error(`Unable to set username: ${e}`);
             throw e;
         }
     }
