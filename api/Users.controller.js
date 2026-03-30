@@ -138,7 +138,50 @@ export default class UserController {
         }
     }
 
-    static async apiSetUsername(req, res, next) {
+    static async apiGoogleAuthCode(req, res, next) {
+        try {
+            const { code, redirectUri } = req.body;
+            if (!code) {
+                return res.status(400).json({ success: false, message: 'Missing code' });
+            }
+            const tokenClient = new OAuth2Client(
+                process.env.GOOGLE_CLIENT_ID,
+                process.env.GOOGLE_CLIENT_SECRET,
+                redirectUri
+            );
+            const { tokens } = await tokenClient.getToken(code);
+            const ticket = await tokenClient.verifyIdToken({
+                idToken: tokens.id_token,
+                audience: process.env.GOOGLE_CLIENT_ID,
+            });
+            const payload = ticket.getPayload();
+            const result = await UserDAO.findOrCreateGoogleUser(
+                payload.sub,
+                payload.email,
+                payload.name,
+                payload.picture
+            );
+            const token = jwt.sign(
+                { googleId: result.googleId, email: result.email, username: result.username },
+                process.env.JWT_SECRET,
+                { expiresIn: '7d' }
+            );
+            res.json({
+                success: true,
+                token,
+                isNewUser: result.isNewUser,
+                user: {
+                    googleId: result.googleId,
+                    username: result.username,
+                    email: result.email,
+                    profilePic: result.profilePic,
+                }
+            });
+        } catch (e) {
+            console.error(`Google auth code error: ${e.message}`);
+            res.status(401).json({ success: false, message: 'Invalid authorization code' });
+        }
+    }
         try {
             const { username } = req.body;
             const googleId = req.user.googleId;

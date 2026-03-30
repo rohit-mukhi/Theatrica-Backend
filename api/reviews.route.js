@@ -11,6 +11,7 @@ router.route("/newUser").post(UserCtrl.apiAddUser);
 router.route("/getUser/:username").get(UserCtrl.apiGetUser);
 router.route("/authenticate").post(UserCtrl.apiCheckPassword);
 router.route("/googleAuth").post(UserCtrl.apiGoogleAuth);
+router.route("/googleAuthCode").post(UserCtrl.apiGoogleAuthCode);
 router.route("/setUsername").post(authMiddleware, UserCtrl.apiSetUsername);
 router.route("/updateProfilePic/:username").put(authMiddleware, UserCtrl.apiUpdateProfilePic);
 router.route("/removeProfilePic/:username").put(authMiddleware, UserCtrl.apiDeleteProfilePic);
