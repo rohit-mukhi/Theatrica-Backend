@@ -88,4 +88,14 @@ export default class ReviewsController {
             res.status(500).json({ error: e });
         }
     }
+
+    static async apiGetReviewsByUser(req, res, next) {
+        try {
+            const username = req.params.username;
+            const reviews = await ReviewsDAO.getReviewsByUsername(username);
+            res.json(reviews);
+        } catch (e) {
+            res.status(500).json({ error: e.message });
+        }
+    }
 }

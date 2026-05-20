@@ -77,4 +77,14 @@ export default class ReviewsDAO {
             return { error: e };
         }
     }
+
+    static async getReviewsByUsername(username) {
+        try {
+            const cursor = await reviews.find({ user: username });
+            return cursor.toArray();
+        } catch (e) {
+            console.log(`Unable to get reviews by user: ${e}`);
+            return { error: e };
+        }
+    }
 }

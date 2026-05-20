@@ -114,4 +114,41 @@ export default class UserDAO {
             throw e;
         }
     }
+
+    static async addToWatchlist(googleId, movieId) {
+        try {
+            return await users.updateOne(
+                { googleId },
+                { $addToSet: { watchlist: movieId } }
+            );
+        } catch (e) {
+            console.error(`Unable to add to watchlist: ${e}`);
+            throw e;
+        }
+    }
+
+    static async removeFromWatchlist(googleId, movieId) {
+        try {
+            return await users.updateOne(
+                { googleId },
+                { $pull: { watchlist: movieId } }
+            );
+        } catch (e) {
+            console.error(`Unable to remove from watchlist: ${e}`);
+            throw e;
+        }
+    }
+
+    static async getWatchlist(username) {
+        try {
+            const user = await users.findOne(
+                { username },
+                { projection: { watchlist: 1, _id: 0 } }
+            );
+            return user?.watchlist ?? [];
+        } catch (e) {
+            console.error(`Unable to get watchlist: ${e}`);
+            throw e;
+        }
+    }
 }

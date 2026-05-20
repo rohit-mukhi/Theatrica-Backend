@@ -210,4 +210,35 @@ export default class UserController {
             res.status(500).json({ success: false, message: 'Internal server error' });
         }
     }
+
+    static async apiAddToWatchlist(req, res, next) {
+        try {
+            const { movieId } = req.body;
+            if (!movieId) return res.status(400).json({ success: false, message: 'Missing movieId' });
+            await UserDAO.addToWatchlist(req.user.googleId, movieId);
+            res.json({ success: true });
+        } catch (e) {
+            res.status(500).json({ success: false, message: e.message });
+        }
+    }
+
+    static async apiRemoveFromWatchlist(req, res, next) {
+        try {
+            const { movieId } = req.params;
+            await UserDAO.removeFromWatchlist(req.user.googleId, movieId);
+            res.json({ success: true });
+        } catch (e) {
+            res.status(500).json({ success: false, message: e.message });
+        }
+    }
+
+    static async apiGetWatchlist(req, res, next) {
+        try {
+            const { username } = req.params;
+            const watchlist = await UserDAO.getWatchlist(username);
+            res.json({ watchlist });
+        } catch (e) {
+            res.status(500).json({ success: false, message: e.message });
+        }
+    }
 }
