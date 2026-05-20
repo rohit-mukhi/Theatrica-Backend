@@ -16,20 +16,6 @@ export default class UserDAO {
         }
     }
 
-    static async addUser(username, password) {
-        try {
-            const userDoc = {
-                username: username,
-                password: password,
-                profilePic: 0
-            };
-            return await users.insertOne(userDoc);
-        } catch (e) {
-            console.log(`Unable to add user: ${e}`);
-            return { error: e };
-        }
-    }
-
     static async getUser(username) {
         try {
             return await users.findOne({ username: username });
@@ -61,22 +47,6 @@ export default class UserDAO {
         }
     }
 
-    static async getHashedPassword(username) {
-        try {
-            const userData = await users.findOne(
-                {username: username},
-                { projection: { password: 1, _id: 0 } }
-            );
-            if(!userData) {
-                return null;
-            }
-            return userData.password;
-        } catch (e) {
-            console.error(`Could not retrieve the password: ${e}`);
-            throw e;
-        }
-    }
-
     static async findOrCreateGoogleUser(googleId, email, name, picture) {
         try {
             let user = await users.findOne({ googleId: googleId });
@@ -86,7 +56,6 @@ export default class UserDAO {
                     username: null,
                     email: email,
                     profilePic: picture || 0,
-                    password: null,
                     isNewUser: true,
                 };
                 await users.insertOne(userDoc);

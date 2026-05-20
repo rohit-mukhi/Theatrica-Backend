@@ -33,7 +33,7 @@ export default class ReviewsDAO {
 
     static async getReview(reviewId) {
         try {
-            return await reviews.findOne({ _id: ObjectId(reviewId) });
+            return await reviews.findOne({ _id: new ObjectId(reviewId) });
         } catch(e) {
             console.error(`Unable to get review; ${e}`);
             return { error: e };
@@ -44,10 +44,9 @@ export default class ReviewsDAO {
         console.log("rev", reviewId);
         try {
             const updateResponse = await reviews.updateOne(
-                { _id: ObjectId(reviewId) },
+                { _id: new ObjectId(reviewId) },
                 { $set: { user: user, review:review } }
             );
-
             return updateResponse
         } catch (e) {
             console.error(`Unable to update review: ${e}`);
@@ -57,9 +56,8 @@ export default class ReviewsDAO {
     static async deleteReview(reviewId) {
         try {
             const deleteResponse = await reviews.deleteOne(
-                { _id: ObjectId(reviewId) }
+                { _id: new ObjectId(reviewId) }
             );
-
             return deleteResponse;
         } catch (e) {
             console.log(`Unable to delete review: ${e}`);
@@ -68,7 +66,6 @@ export default class ReviewsDAO {
     }
 
     static async getReviewsByMovieId(movieId) {
-        console.log("mov", movieId);
         try {
             const cursor = await reviews.find({ movieId: movieId });
             return cursor.toArray();
