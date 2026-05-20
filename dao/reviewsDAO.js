@@ -84,4 +84,19 @@ export default class ReviewsDAO {
             return { error: e };
         }
     }
+
+    // Returns all reviews for movies that the given user has also reviewed,
+    // grouped by user — used to compute match scores.
+    static async getMatchCandidates(username, movieIds) {
+        try {
+            const cursor = await reviews.find({
+                user: { $ne: username },
+                movieId: { $in: movieIds }
+            });
+            return cursor.toArray();
+        } catch (e) {
+            console.log(`Unable to get match candidates: ${e}`);
+            return { error: e };
+        }
+    }
 }

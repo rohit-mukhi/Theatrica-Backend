@@ -120,4 +120,17 @@ export default class UserDAO {
             throw e;
         }
     }
+
+    static async getUsersByUsernames(usernames) {
+        try {
+            const cursor = await users.find(
+                { username: { $in: usernames } },
+                { projection: { username: 1, profilePic: 1, _id: 0 } }
+            );
+            return cursor.toArray();
+        } catch (e) {
+            console.error(`Unable to get users by usernames: ${e}`);
+            throw e;
+        }
+    }
 }

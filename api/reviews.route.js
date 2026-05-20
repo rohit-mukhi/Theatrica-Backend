@@ -7,6 +7,7 @@ const router = express.Router();
 
 router.route("/movie/:id").get(ReviewsCtrl.apiGetReview);
 router.route("/user/:username").get(ReviewsCtrl.apiGetReviewsByUser);
+router.route("/matches/:username").get(ReviewsCtrl.apiGetMatches);
 router.route("/new").post(authMiddleware, ReviewsCtrl.apiPostreview);
 router.route("/getUser/:username").get(UserCtrl.apiGetUser);
 router.route("/googleAuth").post(UserCtrl.apiGoogleAuth);
